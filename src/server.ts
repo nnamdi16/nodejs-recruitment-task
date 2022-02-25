@@ -1,6 +1,6 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const { authFactory, AuthError } = require("./auth");
+import express, { Response } from "express";
+import bodyParser from "body-parser";
+import { authFactory, AuthError } from "./auth";
 
 const PORT = 3000;
 const { JWT_SECRET } = process.env;
@@ -38,7 +38,7 @@ app.post("/auth", (req, res, next) => {
   }
 });
 
-app.use((error, _, res, __) => {
+app.use((error:Error, _:unknown, res: Response, __:unknown) => {
   console.error(
     `Error processing request ${error}. See next message for details`
   );
