@@ -45,8 +45,8 @@ services:
     build:
       context: ./movies
       dockerfile: Dockerfile
-    env_file:
-      - ./movies/.env
+    # env_file:
+    #   - ./movies/.env
     environment:
       APP_PORT: 3001
       JWT_SECRET: ${JWT_SECRET}
@@ -58,8 +58,6 @@ services:
       OMDB_API_KEY: ${OMDB_API_KEY}
     ports:
       - 3001:3001
-    depends_on:
-      - db
  
 networks:
   postgres:
