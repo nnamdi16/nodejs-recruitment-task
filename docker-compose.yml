@@ -1,0 +1,67 @@
+version: "3.2"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+    - "5432:5432"
+    volumes:
+    - ~/data/postgres:/data/postgres
+    env_file:
+    - docker.env
+    networks:
+    - postgres
+ 
+  pgadmin:
+    links:
+    - postgres:postgres
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+    - "8080:80"
+    volumes:
+    - ~/data/pgadmin:/root/.pgadmin
+    env_file:
+    - docker.env
+    networks:
+    - postgres
+  
+  auth:
+    container_name: auth
+    command: node src/server.js
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - published: ${APP_PORT:-3000}
+        target: 3000
+    volumes:
+      - .:/auth/
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+  
+  movies:
+    container_name: movies
+    build:
+      context: ./movies
+      dockerfile: Dockerfile
+    env_file:
+      - ./movies/.env
+    environment:
+      APP_PORT: 3001
+      JWT_SECRET: ${JWT_SECRET}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_NAME: ${DB_NAME}
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
+      OMDB_API_URL: http://www.omdbapi.com/
+      OMDB_API_KEY: 21c79936
+      # MONGO_CONNECTION_STRING: mongodb://mongo:27017/movies
+    ports:
+      - 3001:3001
+    depends_on:
+      - db
+ 
+networks:
+  postgres:
+    driver: bridge

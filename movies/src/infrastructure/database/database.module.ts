@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        name: 'iexchange-backend-test',
+        name: 'movies-api-service',
         type: 'postgres',
         host: configService.get('POSTGRES_HEROKU_HOST'),
         port: configService.get('POSTGRES_PORT'),
