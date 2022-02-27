@@ -40,10 +40,10 @@ services:
     environment:
       JWT_SECRET: ${JWT_SECRET}
   
-  movies:
-    container_name: movies
+  movie:
+    container_name: movie
     build:
-      context: ./movies
+      context: ./movie
       dockerfile: Dockerfile
     # env_file:
     #   - ./movies/.env
