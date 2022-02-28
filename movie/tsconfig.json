@@ -10,6 +10,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "paths": {                                   /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+      "@src/*": ["src/*"],
+      "@app/*": ["src/app/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infra/*":  ["src/infrastructure/*"],
+  }, 
   }
 }
