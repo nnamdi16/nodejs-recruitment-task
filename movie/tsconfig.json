@@ -16,6 +16,7 @@
       "@app/*": ["src/app/*"],
       "@domain/*": ["src/domain/*"],
       "@infra/*":  ["src/infrastructure/*"],
+      "@test/*":  ["src/test/*"],
   }, 
   }
 }
