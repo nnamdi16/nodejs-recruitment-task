@@ -67,7 +67,6 @@ describe('MovieService', () => {
           title: 'Guardians of the Galaxy Vol. 2',
         };
         const movieResponse = await movieService.create(request);
-        console.log(movieResponse);
         expect(movieResponse).toMatchObject(response);
       });
     });
