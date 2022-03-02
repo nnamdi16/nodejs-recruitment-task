@@ -7,7 +7,7 @@ import {
   SwaggerDocumentOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -15,7 +15,7 @@ async function bootstrap() {
     cors: true,
     bodyParser: true,
   });
-  app.use(helmet);
+  app.use(helmet());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const configService = await app.get(ConfigService);
   const swaggerConfig = new DocumentBuilder()
