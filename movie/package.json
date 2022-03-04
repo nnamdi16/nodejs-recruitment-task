@@ -42,6 +42,7 @@
         "class-validator": "^0.13.2",
         "helmet": "^5.0.2",
         "joi": "^17.6.0",
+        "passport": "^0.5.2",
         "passport-jwt": "^4.0.0",
         "pg": "^8.7.3",
         "psql": "^0.0.1",
