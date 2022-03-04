@@ -31,9 +31,11 @@ jobs:
              uses: actions/setup-node@v2
              with:
                  node-version: '14.x'
-                 POSTGRES_HOST: ${{secrets.POSTGRES_HOST}}
            - name: Install dependencies
              run: npm install
            - name: Run test
              run: npm test
+             env:
+              CI: true
+              POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }} 
  
