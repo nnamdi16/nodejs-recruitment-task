@@ -7,5 +7,5 @@ export interface IMovieService {
     movieDto: CreateMovieDto,
     userDetail: TokenPayload,
   ): Promise<IResponse>;
-  findAllByAuthorisedUser(userDetails: TokenPayload): Promise<IResponse>;
+  findAllMoviesByAuthorisedUser(userDetails: TokenPayload): Promise<IResponse>;
 }
