@@ -25,6 +25,6 @@ export class MoviesController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   public async fetchMovies(@Req() req): Promise<any> {
-    return await this.movieService.findAllByAuthorisedUser(req.user);
+    return await this.movieService.findAllMoviesByAuthorisedUser(req.user);
   }
 }
