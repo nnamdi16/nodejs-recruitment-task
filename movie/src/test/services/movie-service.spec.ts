@@ -10,7 +10,7 @@ import { TokenPayload } from '../../domain/interface/tokenPayload.interface';
 import { Roles } from '../../domain/interface/role.enum';
 
 const omdbServiceApi = {
-  getMovieByTitle: jest.fn((_title) => Promise.resolve(data)),
+  getMovieByTitle: jest.fn((_title) => Promise.resolve(OMDBData)),
 };
 const mockedSubTask = {
   create: jest.fn((_title) => Promise.resolve(data)),
@@ -24,6 +24,13 @@ const mockedSubTask = {
       relations: [],
     },
   })),
+};
+
+const OMDBData = {
+  Title: 'Guardians of the Galaxy Vol. 2',
+  Released: '2017',
+  Genre: 'Action, Adventure, Comedy',
+  Director: 'James Gunn',
 };
 
 const data = {
