@@ -3,11 +3,13 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateMovieDto } from '../dto/createMovie.dto';
 import { MovieDto } from '../dto/movie.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { validate } from 'class-validator';
 import { OMDBService } from './omdb.service';
 import { IResponse } from '../interface/response.interface';
 import MovieEntity from '../../infrastructure/database/PostgresDb/entities/movie.entity';
+import { TokenPayload } from '../interface/tokenPayload.interface';
+import { Roles } from '../interface/role.enum';
 
 @Injectable()
 export class MovieService implements IMovieService {
@@ -16,9 +18,26 @@ export class MovieService implements IMovieService {
     private readonly movieRepository: Repository<MovieEntity>,
     private readonly omdbService: OMDBService,
   ) {}
-  async create(movieDto: CreateMovieDto): Promise<IResponse> {
+  async findAllMoviesByAuthorisedUser(
+    userDetails: TokenPayload,
+  ): Promise<IResponse> {
+    const { userId } = userDetails;
+    const movies = await this.movieRepository.find({
+      userId: userId.toString(),
+    });
+    return {
+      status: HttpStatus.OK,
+      message: 'Success',
+      data: movies,
+    };
+  }
+  async create(
+    movieDto: CreateMovieDto,
+    userDetails: TokenPayload,
+  ): Promise<IResponse> {
     try {
       const validationError = await validate(movieDto);
+      console.log(validationError);
       if (validationError.length > 0) {
         const _errors = { message: 'User input is invalid' };
         throw new HttpException(
@@ -26,11 +45,12 @@ export class MovieService implements IMovieService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const userId = '2';
+      const { userId } = userDetails;
+      await this.checkMovieLimit(userDetails);
       const movie = await this.omdbService.getMovieByTitle(movieDto.title);
       const { Title, Released, Genre, Director } = movie;
       const movieData: MovieDto = {
-        userId,
+        userId: userId.toString(),
         title: Title,
         released: Released,
         genre: Genre,
@@ -51,7 +71,24 @@ export class MovieService implements IMovieService {
       }
     }
   }
-  findAll() {
-    throw new Error('Method not implemented.');
+
+  async checkMovieLimit(userDetails: TokenPayload) {
+    const { userId, role } = userDetails;
+    if (role === Roles.BASIC) {
+      const endDate = new Date();
+      const startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+      const existingMovieList: MovieDto[] = await this.movieRepository.find({
+        where: {
+          createdDate: Between(startDate.toISOString(), endDate.toISOString()),
+          userId: userId.toString(),
+        },
+      });
+      if (existingMovieList.length === 5) {
+        throw new HttpException(
+          { message: 'Exceeded limit to create movie per month' },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
   }
 }
