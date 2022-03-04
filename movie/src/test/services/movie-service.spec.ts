@@ -6,13 +6,17 @@ import { CreateMovieDto } from '../../domain/dto/createMovie.dto';
 import { MovieService } from '../../domain/services/movie.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import MovieEntity from '../../infrastructure/database/PostgresDb/entities/movie.entity';
+import { TokenPayload } from '../../domain/interface/tokenPayload.interface';
+import { Roles } from '../../domain/interface/role.enum';
 
 const omdbServiceApi = {
   getMovieByTitle: jest.fn((_title) => Promise.resolve(data)),
 };
 const mockedSubTask = {
   create: jest.fn((_title) => Promise.resolve(data)),
-  findAllByAuthorisedUser: jest.fn((_userId) => Promise.resolve(movieList)),
+  findAllMoviesByAuthorisedUser: jest.fn((_userId) =>
+    Promise.resolve(movieList),
+  ),
   find: jest.fn(({ userId }) => Promise.resolve(movieList)),
   save: jest.fn(() => ({
     metadata: {
@@ -52,6 +56,16 @@ const movieListResponse = {
     },
   ],
 };
+
+export const userDetails: TokenPayload = {
+  userId: 123,
+  name: 'Basic Thomas',
+  role: Roles.BASIC,
+  iat: new Date(1606221838),
+  exp: new Date(1606221838),
+  iss: 'https://www.netguru.com/',
+  sub: '123',
+};
 describe('MovieService', () => {
   let movieService: MovieService;
 
@@ -80,7 +94,7 @@ describe('MovieService', () => {
         const request: CreateMovieDto = {
           title: 'Guardians of the Galaxy Vol. 2',
         };
-        const movieResponse = await movieService.create(request);
+        const movieResponse = await movieService.create(request, userDetails);
         expect(movieResponse).toMatchObject(createMovieResponse);
       });
     });
@@ -89,7 +103,9 @@ describe('MovieService', () => {
     describe("Successfully fetch all user's movies", () => {
       it('should save movie', async () => {
         const userId = ' 3';
-        const movieList = await movieService.findAllByAuthorisedUser(userId);
+        const movieList = await movieService.findAllMoviesByAuthorisedUser(
+          userDetails,
+        );
         expect(movieList).toMatchObject(movieListResponse);
       });
     });
