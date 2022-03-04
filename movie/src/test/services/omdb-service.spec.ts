@@ -1,3 +1,4 @@
+import { mockedMovie } from './../__mocks__/movie.mock';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -7,14 +8,10 @@ import mockedConfigService from '../__mocks__/config.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 const data = {
-  title: 'Guardians of the Galaxy Vol. 2',
-  released: '2017',
-  genre: 'Action, Adventure, Comedy',
-  director: 'James Gunn',
+  data: mockedMovie,
 };
 const omdbServiceApi = {
-  pipe: jest.fn((data) => data),
-  getMovieByTitle: jest.fn((_title) => Promise.resolve(data)),
+  getMovieByTitle: jest.fn((_title) => Promise.resolve(mockedMovie)),
 };
 describe('OMDBService', () => {
   let omdbService: OMDBService;
@@ -37,10 +34,12 @@ describe('OMDBService', () => {
   describe('Get movie by title', () => {
     describe('Fetch movie by title successfully', () => {
       it('should fetch a movie', async (done) => {
-        mockedAxios.get.mockImplementationOnce(() => Promise.resolve({ data }));
+        mockedAxios.get.mockImplementationOnce(() =>
+          Promise.resolve(mockedMovie),
+        );
         const title = 'Guardians of the Galaxy Vol. 2';
         await omdbService.getMovieByTitle(title).then((res) => {
-          expect(res).toMatchObject(expect.objectContaining(data));
+          expect(res).toMatchObject(expect.objectContaining(mockedMovie));
           done();
         });
       });

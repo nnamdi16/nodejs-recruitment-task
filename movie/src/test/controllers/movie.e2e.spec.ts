@@ -1,3 +1,4 @@
+import { mockedMovie } from './../__mocks__/movie.mock';
 import { userDetails } from './../services/movie-service.spec';
 import { JwtAuthGuard } from './../../app/middlewares/guards/jwt.guard';
 import {
@@ -12,7 +13,7 @@ import { OMDBService } from '../../domain/services/omdb.service';
 import * as request from 'supertest';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import MovieEntity from '../../infrastructure/database/PostgresDb/entities/movie.entity';
-import mockedMovie from '../__mocks__/movie.mock';
+
 import { MoviesController } from '../../app/controllers/movie.controller';
 import mockedConfigService from '../__mocks__/config.service';
 import mockedJwtService from '../__mocks__/jwt.service';
@@ -20,6 +21,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from '../../app/middlewares/guards/jwt.strategy';
 import mockedUser from '../__mocks__/user.mock';
 import { AppModule } from '../../app.module';
+import { mockedMovieEntity } from '../__mocks__/movie.mock';
 
 const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyMywibmFtZSI6IkJhc2ljIFRob21hcyIsInJvbGUiOiJiYXNpYyIsImlhdCI6MTY0NjMxNTEzMCwiZXhwIjoxNjQ2MzE2OTMwLCJpc3MiOiJodHRwczovL3d3dy5uZXRndXJ1LmNvbS8iLCJzdWIiOiIxMjMifQ.XoaUmYka6dNuUABfao-_VOamiENBD0P3jAQhVSpYct4`;
 describe('MovieController (e2e)', () => {
@@ -28,7 +30,7 @@ describe('MovieController (e2e)', () => {
 
   beforeEach(async () => {
     movieData = {
-      ...mockedMovie,
+      ...mockedMovieEntity,
       updateTimestamp: () => jest.fn(() => new Date()),
     };
     const movieRepository = {
@@ -41,7 +43,12 @@ describe('MovieController (e2e)', () => {
       imports: [AppModule],
       controllers: [MoviesController],
       providers: [
-        OMDBService,
+        {
+          provide: OMDBService,
+          useValue: {
+            getMovieByTitle: jest.fn().mockReturnValue(mockedMovie),
+          },
+        },
         JwtStrategy,
         {
           provide: JwtStrategy,
@@ -94,7 +101,13 @@ describe('MovieController (e2e)', () => {
       const data = {
         status: 201,
         message: 'Movie successfully created',
-        data: {},
+        data: {
+          userId: '123',
+          title: 'Full Metal Jacket',
+          released: '10 Jul 1987',
+          genre: 'Drama, War',
+          director: 'Stanley Kubrick',
+        },
       };
       await request(app.getHttpServer())
         .get('/movie/create/Shame')

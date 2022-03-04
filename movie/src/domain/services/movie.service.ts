@@ -60,7 +60,7 @@ export class MovieService implements IMovieService {
       return {
         status: HttpStatus.CREATED,
         message: 'Movie successfully created',
-        data: movie,
+        data: movieData,
       };
     } catch (error) {
       if (error instanceof HttpException) {
