@@ -43,6 +43,6 @@ jobs:
               POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }} 
               POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
               JWT_SECRET: ${{ secrets.JWT_SECRET }}
-              JWT_SECRET: ${{ secrets.JWT_EXPIRATION_TIME }}
+              JWT_EXPIRATION_TIME: ${{ secrets.JWT_EXPIRATION_TIME }}
                 
  

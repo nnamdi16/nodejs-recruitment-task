@@ -8,7 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        name: 'movies-api',
         type: 'postgres',
         host: configService.get('POSTGRES_HOST'),
         port: configService.get('POSTGRES_PORT'),
@@ -16,7 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         logging: true,
-        ssl: false,
+        ssl: { rejectUnauthorized: false },
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true,
         migrationsTableName: 'migration',
