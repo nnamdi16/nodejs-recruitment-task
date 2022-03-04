@@ -27,6 +27,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         },
         seeds: ['src/modules/seeds/**/*{.ts,.js}'],
         factories: ['src/modules/factories/**/*{.ts,.js}'],
+        keepConnectionAlive: true,
       }),
     }),
   ],
