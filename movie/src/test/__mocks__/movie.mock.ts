@@ -15,7 +15,7 @@ const mockedMovie: MovieEntity = {
   updatedBy: '',
   Comment: '',
   updateTimestamp: function (): void {
-    this.updatedDate = new Date();
+    throw new Error('Function not implemented.');
   },
 };
 
