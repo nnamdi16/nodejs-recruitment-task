@@ -21,6 +21,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Movie API')
     .setDescription('A simple move API that can create and view list of movies')
+    .addBearerAuth()
     .setVersion('1.0')
     .build();
   const options: SwaggerDocumentOptions = {
