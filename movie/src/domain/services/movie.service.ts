@@ -37,7 +37,6 @@ export class MovieService implements IMovieService {
   ): Promise<IResponse> {
     try {
       const validationError = await validate(movieDto);
-      console.log(validationError);
       if (validationError.length > 0) {
         const _errors = { message: 'User input is invalid' };
         throw new HttpException(
