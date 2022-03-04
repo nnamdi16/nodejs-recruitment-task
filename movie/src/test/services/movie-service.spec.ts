@@ -11,7 +11,9 @@ const omdbServiceApi = {
   getMovieByTitle: jest.fn((_title) => Promise.resolve(data)),
 };
 const mockedSubTask = {
-  create: jest.fn((_query) => Promise.resolve(data)),
+  create: jest.fn((_title) => Promise.resolve(data)),
+  findAllByAuthorisedUser: jest.fn((_userId) => Promise.resolve(movieList)),
+  find: jest.fn(({ userId }) => Promise.resolve(movieList)),
   save: jest.fn(() => ({
     metadata: {
       columns: [],
@@ -26,8 +28,8 @@ const data = {
   genre: 'Action, Adventure, Comedy',
   director: 'James Gunn',
 };
-
-const response = {
+const movieList = [data];
+const createMovieResponse = {
   status: 201,
   message: 'Movie successfully created',
   data: {
@@ -38,6 +40,18 @@ const response = {
   },
 };
 
+const movieListResponse = {
+  status: 200,
+  message: 'Success',
+  data: [
+    {
+      title: 'Guardians of the Galaxy Vol. 2',
+      released: '2017',
+      genre: 'Action, Adventure, Comedy',
+      director: 'James Gunn',
+    },
+  ],
+};
 describe('MovieService', () => {
   let movieService: MovieService;
 
@@ -60,14 +74,23 @@ describe('MovieService', () => {
   it('should be defined', () => {
     expect(movieService).toBeDefined();
   });
-  describe('Fetch movie by title successfully', () => {
-    describe('and the user is matched', () => {
+  describe('Create Movie', () => {
+    describe('Successfully Create a movie', () => {
       it('should save movie', async () => {
         const request: CreateMovieDto = {
           title: 'Guardians of the Galaxy Vol. 2',
         };
         const movieResponse = await movieService.create(request);
-        expect(movieResponse).toMatchObject(response);
+        expect(movieResponse).toMatchObject(createMovieResponse);
+      });
+    });
+  });
+  describe('Fetch Movies By Authrised User', () => {
+    describe("Successfully fetch all user's movies", () => {
+      it('should save movie', async () => {
+        const userId = ' 3';
+        const movieList = await movieService.findAllByAuthorisedUser(userId);
+        expect(movieList).toMatchObject(movieListResponse);
       });
     });
   });
